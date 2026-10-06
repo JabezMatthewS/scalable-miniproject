@@ -1,0 +1,151 @@
+{
+	"info": {
+		"_postman_id": "courier-parcel-tracking-v1",
+		"name": "Courier & Parcel Tracking System - End-to-End Test Suite",
+		"description": "Evaluation test suite demonstrating Event Sourcing, REST APIs, and RabbitMQ message pipeline",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Customer Service - Register Customer",
+			"request": {
+				"method": "POST",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Alice Johnson\",\n  \"email\": \"alice@example.com\",\n  \"phone\": \"+1234567890\",\n  \"address\": \"100 Innovation Blvd, Tech City\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/customers",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["api", "v1", "customers"]
+				}
+			}
+		},
+		{
+			"name": "2. Shipment Service - Create Shipment (Emits ShipmentCreated)",
+			"request": {
+				"method": "POST",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"customerId\": 1,\n  \"origin\": \"Distribution Center NYC\",\n  \"destination\": \"742 Evergreen Terrace, Springfield\",\n  \"weight\": 2.75\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/shipments",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["api", "v1", "shipments"]
+				}
+			}
+		},
+		{
+			"name": "3. Hub Operations - Parcel Collected",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/deliveries/collect?trackingId={{trackingId}}&agentName=Bob&pickupLocation=NYC_Hub",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["api", "v1", "deliveries", "collect"],
+					"query": [
+						{"key": "trackingId", "value": "{{trackingId}}"},
+						{"key": "agentName", "value": "Bob"},
+						{"key": "pickupLocation", "value": "NYC_Hub"}
+					]
+				}
+			}
+		},
+		{
+			"name": "4. Hub Operations - Reached Hub Scan-In",
+			"request": {
+				"method": "POST",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"trackingId\": \"{{trackingId}}\",\n  \"hubId\": \"HUB-NORTH-01\",\n  \"hubLocation\": \"Chicago Logistics Terminal\",\n  \"notes\": \"Sorting complete\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/hubs/scan-in",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["api", "v1", "hubs", "scan-in"]
+				}
+			}
+		},
+		{
+			"name": "5. Hub Operations - Left Hub Scan-Out",
+			"request": {
+				"method": "POST",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"trackingId\": \"{{trackingId}}\",\n  \"hubId\": \"HUB-NORTH-01\",\n  \"hubLocation\": \"Departed to Springfield Hub\",\n  \"notes\": \"Loaded onto Truck #42\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/hubs/scan-out",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["api", "v1", "hubs", "scan-out"]
+				}
+			}
+		},
+		{
+			"name": "6. Delivery Service - Out for Delivery",
+			"request": {
+				"method": "POST",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"trackingId\": \"{{trackingId}}\",\n  \"agentName\": \"Dave Courier\",\n  \"currentArea\": \"Springfield District 5\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/deliveries/out-for-delivery",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["api", "v1", "deliveries", "out-for-delivery"]
+				}
+			}
+		},
+		{
+			"name": "7. Delivery Service - Complete Delivery",
+			"request": {
+				"method": "POST",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"trackingId\": \"{{trackingId}}\",\n  \"agentName\": \"Dave Courier\",\n  \"currentArea\": \"Front Porch\",\n  \"recipientSignature\": \"Homer Simpson\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/deliveries/complete",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["api", "v1", "deliveries", "complete"]
+				}
+			}
+		},
+		{
+			"name": "8. Tracking Service - Event Sourcing State & Audit Reconstruction",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/tracking/{{trackingId}}",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["api", "v1", "tracking", "{{trackingId}}"]
+				}
+			}
+		}
+	]
+}

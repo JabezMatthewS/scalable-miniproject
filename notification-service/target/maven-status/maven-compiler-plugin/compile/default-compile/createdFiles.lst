@@ -1,0 +1,4 @@
+com\courier\tracking\notification\NotificationServiceApplication.class
+com\courier\tracking\notification\service\NotificationService$1.class
+com\courier\tracking\notification\config\RabbitMQNotificationConfig.class
+com\courier\tracking\notification\service\NotificationService.class

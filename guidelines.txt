@@ -1,0 +1,170 @@
+1. Purpose of the Mini Project
+The mini project should demonstrate more than basic CRUD operations. Students should design a business problem as a set of independently deployable Spring Boot microservices and demonstrate synchronous REST communication together with at least one asynchronous event-driven workflow.
+Identify clear business capabilities and microservice boundaries.
+Use Controller-Service-Repository architecture inside each service.
+Apply REST API design, DTOs, validation, exception handling and database persistence.
+Use RabbitMQ or Kafka for asynchronous communication.
+Demonstrate resilience concepts such as retry, Dead Letter Queue (DLQ) and idempotency.
+Use Saga, CQRS or Event Sourcing where the selected problem naturally requires it.
+Test the implementation and maintain the source code in GitHub.
+
+
+11. Courier and Parcel Tracking System
+Develop a parcel system that records every shipment movement as an event and reconstructs the current delivery status.
+Suggested Microservices
+Customer Service
+Shipment Service
+Tracking Service
+Hub Service
+Delivery Service
+Notification Service
+Typical Workflow / Architecture
+ShipmentCreated
+   -> ParcelCollected
+   -> ReachedHub
+   -> LeftHub
+   -> OutForDelivery
+   -> Delivered
+
+
+Important Domain Events
+ShipmentCreated, ParcelCollected, ReachedHub, LeftHub, OutForDelivery, Delivered.
+Sample REST APIs
+POST /shipments
+GET /shipments/{id}
+GET /shipments/{id}/tracking
+Concepts to Demonstrate
+Event Sourcing
+Audit/history reconstruction
+Pub/Sub notifications
+Event ordering
+
+
+20. Common Architecture for All Teams
+Frontend / Mobile Client
+          |
+      API Gateway
+          |
+------------------------------------------------
+|              |              |                |
+Microservice A Microservice B Microservice C ...
+|              |              |
+DB-A           DB-B           DB-C
+\              |              /
+ -------- RabbitMQ / Kafka --------
+                  |
+             Event Consumers
+
+
+Inside each Spring Boot service:
+HTTP Request
+     |
+Controller
+     |
+Request DTO + Validation
+     |
+Service / Business Logic
+     |
+Domain Model
+     |
+Repository
+     |
+Database
+     |
+Response DTO -> JSON Response
+
+21. Mandatory Mini-Project Requirements
+Minimum 3-5 independent Spring Boot microservices.
+At least one database per major service; avoid direct cross-service table access.
+REST APIs using appropriate GET, POST, PUT/PATCH and DELETE operations.
+Controller-Service-Repository architecture.
+At least one clearly identified DDD bounded context.
+DTOs, Bean Validation and global exception handling.
+RabbitMQ or Kafka for at least one asynchronous workflow.
+Demonstration of Publish-Subscribe or Work Queue messaging pattern.
+Retry mechanism and Dead Letter Queue (DLQ).
+Idempotent message processing.
+One Saga workflow when the project contains a distributed business transaction.
+JUnit/Mockito tests and REST API testing.
+Dockerize the services; Docker Compose is recommended.
+Maintain source code and documentation in a GitHub repository.
+Provide Postman collection/screenshots or equivalent API testing evidence.
+
+
+22. Advanced Features for Strong Teams
+CQRS
+Event Sourcing
+API Gateway
+Service Discovery
+Centralized Configuration
+Circuit Breaker and fallback
+JWT-based authentication
+Docker Compose
+Kubernetes deployment
+Distributed logging/tracing
+Monitoring and health checks
+23. Suggested Evaluation Rubric
+Component
+Marks
+Problem identification and architecture
+10
+Microservice decomposition / bounded contexts
+10
+Spring Boot implementation
+15
+REST API design and validation
+10
+Database and JPA
+10
+RabbitMQ/Kafka integration
+10
+Event-driven workflow
+10
+Saga/CQRS/resilience feature
+10
+Testing
+5
+Docker, GitHub and documentation
+5
+Demo and viva
+5
+TOTAL
+100
+
+24. Suggested Project-to-Concept Allocation
+Project
+Primary Concept
+E-Commerce
+Saga + CQRS
+Food Delivery
+Saga choreography
+Online Examination
+CQRS
+Courier Tracking
+Event Sourcing
+Course Registration
+Concurrency + idempotency
+Hotel Reservation
+Saga compensation
+Smart Warehouse
+Publish/Subscribe
+Helpdesk
+Work Queue + DLQ
+Movie Booking
+Distributed locking + timeout
+Bank Transfer
+Saga + compensation + idempotency
+
+25. Expected Student Deliverables
+Problem statement and objectives.
+Microservice architecture diagram.
+Identification of bounded contexts and services.
+Database design for each service.
+REST API specification.
+Event catalogue: event name, producer, consumer and payload.
+Source code for all Spring Boot services.
+RabbitMQ/Kafka configuration and event handlers.
+Testing evidence and Postman collection.
+Docker/Docker Compose configuration.
+GitHub repository link.
+Mini-project report and demonstration presentation.

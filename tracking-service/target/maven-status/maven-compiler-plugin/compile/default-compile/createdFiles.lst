@@ -1,0 +1,7 @@
+com\courier\tracking\trackingservice\entity\StoredEvent.class
+com\courier\tracking\trackingservice\service\TrackingService.class
+com\courier\tracking\trackingservice\dto\TrackingHistoryResponse.class
+com\courier\tracking\trackingservice\config\RabbitMQTrackingConfig.class
+com\courier\tracking\trackingservice\TrackingServiceApplication.class
+com\courier\tracking\trackingservice\controller\TrackingController.class
+com\courier\tracking\trackingservice\repository\EventStoreRepository.class

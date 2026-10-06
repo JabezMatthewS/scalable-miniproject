@@ -1,0 +1,6 @@
+com\courier\tracking\hub\service\HubDeliveryService.class
+com\courier\tracking\hub\dto\DeliveryStatusUpdateRequest.class
+com\courier\tracking\hub\dto\HubScanRequest.class
+com\courier\tracking\hub\HubDeliveryServiceApplication.class
+com\courier\tracking\hub\config\RabbitMQHubConfig.class
+com\courier\tracking\hub\controller\HubDeliveryController.class

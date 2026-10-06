@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: courier_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres-customer:
+    image: postgres:15-alpine
+    container_name: postgres_customer
+    environment:
+      POSTGRES_DB: customer_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5431:5432"
+
+  postgres-shipment:
+    image: postgres:15-alpine
+    container_name: postgres_shipment
+    environment:
+      POSTGRES_DB: shipment_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+
+  postgres-hub:
+    image: postgres:15-alpine
+    container_name: postgres_hub
+    environment:
+      POSTGRES_DB: hub_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+
+  postgres-tracking:
+    image: postgres:15-alpine
+    container_name: postgres_tracking
+    environment:
+      POSTGRES_DB: tracking_eventstore_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5434:5432"
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api_gateway
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+  customer-service:
+    build: ./customer-service
+    container_name: customer_service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres-customer
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-customer:5432/customer_db
+
+  shipment-service:
+    build: ./shipment-service
+    container_name: shipment_service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres-shipment
+      - rabbitmq
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-shipment:5432/shipment_db
+      SPRING_RABBITMQ_HOST: rabbitmq
+
+  hub-delivery-service:
+    build: ./hub-delivery-service
+    container_name: hub_delivery_service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - postgres-hub
+      - rabbitmq
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-hub:5432/hub_db
+      SPRING_RABBITMQ_HOST: rabbitmq
+
+  tracking-service:
+    build: ./tracking-service
+    container_name: tracking_service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - postgres-tracking
+      - rabbitmq
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-tracking:5432/tracking_eventstore_db
+      SPRING_RABBITMQ_HOST: rabbitmq
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification_service
+    ports:
+      - "8085:8085"
+    depends_on:
+      - rabbitmq
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq

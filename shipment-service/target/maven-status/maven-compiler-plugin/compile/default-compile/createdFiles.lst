@@ -1,0 +1,7 @@
+com\courier\tracking\shipment\controller\ShipmentController.class
+com\courier\tracking\shipment\service\ShipmentService.class
+com\courier\tracking\shipment\repository\ShipmentRepository.class
+com\courier\tracking\shipment\config\RabbitMQConfig.class
+com\courier\tracking\shipment\dto\CreateShipmentRequest.class
+com\courier\tracking\shipment\entity\Shipment.class
+com\courier\tracking\shipment\ShipmentServiceApplication.class

@@ -1,0 +1,7 @@
+D:\projects\scalable-miniproject\shipment-service\src\main\java\com\courier\tracking\shipment\dto\CreateShipmentRequest.java
+D:\projects\scalable-miniproject\shipment-service\src\main\java\com\courier\tracking\shipment\ShipmentServiceApplication.java
+D:\projects\scalable-miniproject\shipment-service\src\main\java\com\courier\tracking\shipment\entity\Shipment.java
+D:\projects\scalable-miniproject\shipment-service\src\main\java\com\courier\tracking\shipment\config\RabbitMQConfig.java
+D:\projects\scalable-miniproject\shipment-service\src\main\java\com\courier\tracking\shipment\controller\ShipmentController.java
+D:\projects\scalable-miniproject\shipment-service\src\main\java\com\courier\tracking\shipment\service\ShipmentService.java
+D:\projects\scalable-miniproject\shipment-service\src\main\java\com\courier\tracking\shipment\repository\ShipmentRepository.java

@@ -1,0 +1,2 @@
+com\courier\tracking\common\events\ParcelDomainEvent.class
+com\courier\tracking\common\enums\ParcelEventType.class

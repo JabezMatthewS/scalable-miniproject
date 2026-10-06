@@ -1,0 +1,6 @@
+D:\projects\scalable-miniproject\hub-delivery-service\src\main\java\com\courier\tracking\hub\dto\DeliveryStatusUpdateRequest.java
+D:\projects\scalable-miniproject\hub-delivery-service\src\main\java\com\courier\tracking\hub\dto\HubScanRequest.java
+D:\projects\scalable-miniproject\hub-delivery-service\src\main\java\com\courier\tracking\hub\service\HubDeliveryService.java
+D:\projects\scalable-miniproject\hub-delivery-service\src\main\java\com\courier\tracking\hub\controller\HubDeliveryController.java
+D:\projects\scalable-miniproject\hub-delivery-service\src\main\java\com\courier\tracking\hub\config\RabbitMQHubConfig.java
+D:\projects\scalable-miniproject\hub-delivery-service\src\main\java\com\courier\tracking\hub\HubDeliveryServiceApplication.java
