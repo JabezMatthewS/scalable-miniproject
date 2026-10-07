@@ -2,6 +2,7 @@ package com.courier.tracking.hub.controller;
 
 import com.courier.tracking.hub.dto.DeliveryStatusUpdateRequest;
 import com.courier.tracking.hub.dto.HubScanRequest;
+import com.courier.tracking.hub.dto.ParcelCollectRequest;
 import com.courier.tracking.hub.service.HubDeliveryService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,25 @@ public class HubDeliveryController {
     }
 
     @PostMapping("/deliveries/collect")
-    public ResponseEntity<Map<String, String>> collectParcel(@RequestParam String trackingId,
-                                                             @RequestParam String agentName,
-                                                             @RequestParam String pickupLocation) {
-        hubDeliveryService.recordParcelCollected(trackingId, agentName, pickupLocation);
+    public ResponseEntity<Map<String, String>> collectParcel(
+            @RequestParam(required = false) String trackingId,
+            @RequestParam(required = false) String agentName,
+            @RequestParam(required = false) String pickupLocation,
+            @RequestBody(required = false) ParcelCollectRequest body) {
+
+        String finalTrackingId = (body != null && body.getTrackingId() != null) ? body.getTrackingId() : trackingId;
+        String finalAgentName = (body != null && body.getAgentName() != null) ? body.getAgentName() : agentName;
+        String finalPickupLocation = (body != null && body.getPickupLocation() != null) ? body.getPickupLocation() : pickupLocation;
+
+        if (finalTrackingId == null || finalTrackingId.isBlank()) {
+            throw new IllegalArgumentException("trackingId is required (as query param or JSON body)");
+        }
+
+        hubDeliveryService.recordParcelCollected(
+                finalTrackingId,
+                finalAgentName != null ? finalAgentName : "DefaultAgent",
+                finalPickupLocation != null ? finalPickupLocation : "OriginHub"
+        );
         return ResponseEntity.ok(Map.of("message", "Parcel collected event published successfully"));
     }
 
