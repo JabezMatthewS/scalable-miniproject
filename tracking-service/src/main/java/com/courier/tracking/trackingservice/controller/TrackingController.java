@@ -14,11 +14,8 @@ public class TrackingController {
         this.trackingService = trackingService;
     }
 
-    /**
-     * Requirement endpoint: GET /shipments/{id}/tracking
-     */
     @GetMapping("/{trackingId}")
-    public ResponseEntity<TrackingHistoryResponse> getTrackingHistory(@PathVariable String trackingId) {
+    public ResponseEntity<TrackingHistoryResponse> getTrackingHistory(@PathVariable("trackingId") String trackingId) {
         return ResponseEntity.ok(trackingService.reconstructParcelState(trackingId));
     }
 }

@@ -23,7 +23,7 @@ public class ShipmentController {
     }
 
     @GetMapping("/{trackingId}")
-    public ResponseEntity<Shipment> getShipment(@PathVariable String trackingId) {
+    public ResponseEntity<Shipment> getShipment(@PathVariable("trackingId") String trackingId) {
         return ResponseEntity.ok(shipmentService.getShipmentByTrackingId(trackingId));
     }
 }

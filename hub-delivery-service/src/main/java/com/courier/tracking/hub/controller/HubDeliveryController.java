@@ -20,24 +20,11 @@ public class HubDeliveryController {
     }
 
     @PostMapping("/deliveries/collect")
-    public ResponseEntity<Map<String, String>> collectParcel(
-            @RequestParam(required = false) String trackingId,
-            @RequestParam(required = false) String agentName,
-            @RequestParam(required = false) String pickupLocation,
-            @RequestBody(required = false) ParcelCollectRequest body) {
-
-        String finalTrackingId = (body != null && body.getTrackingId() != null) ? body.getTrackingId() : trackingId;
-        String finalAgentName = (body != null && body.getAgentName() != null) ? body.getAgentName() : agentName;
-        String finalPickupLocation = (body != null && body.getPickupLocation() != null) ? body.getPickupLocation() : pickupLocation;
-
-        if (finalTrackingId == null || finalTrackingId.isBlank()) {
-            throw new IllegalArgumentException("trackingId is required (as query param or JSON body)");
-        }
-
+    public ResponseEntity<Map<String, String>> collectParcel(@Valid @RequestBody ParcelCollectRequest request) {
         hubDeliveryService.recordParcelCollected(
-                finalTrackingId,
-                finalAgentName != null ? finalAgentName : "DefaultAgent",
-                finalPickupLocation != null ? finalPickupLocation : "OriginHub"
+                request.getTrackingId(),
+                request.getAgentName() != null ? request.getAgentName() : "Courier Bob",
+                request.getPickupLocation() != null ? request.getPickupLocation() : "Origin Location"
         );
         return ResponseEntity.ok(Map.of("message", "Parcel collected event published successfully"));
     }
