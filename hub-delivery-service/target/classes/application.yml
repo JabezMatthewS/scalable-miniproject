@@ -25,3 +25,7 @@ spring:
           initial-interval: 1000ms
           max-attempts: 3
           multiplier: 2.0
+  h2:
+    console:
+      enabled: true
+

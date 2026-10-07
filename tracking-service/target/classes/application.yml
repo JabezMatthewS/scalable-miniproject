@@ -18,3 +18,7 @@ spring:
     port: ${SPRING_RABBITMQ_PORT:5672}
     username: ${SPRING_RABBITMQ_USER:guest}
     password: ${SPRING_RABBITMQ_PASSWORD:guest}
+  h2:
+    console:
+      enabled: true
+
