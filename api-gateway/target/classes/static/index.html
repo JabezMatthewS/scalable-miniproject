@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwiftTrack — Event-Driven Courier & Parcel Tracking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(18, 24, 38, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover: rgba(30, 41, 59, 0.85);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-light: rgba(99, 102, 241, 0.15);
+      --accent: #06b6d4;
+      --success: #10b981;
+      --success-light: rgba(16, 185, 129, 0.15);
+      --warning: #f59e0b;
+      --warning-light: rgba(245, 158, 11, 0.15);
+      --danger: #ef4444;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at 15% 15%, #131b2e 0%, #090d16 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(16px);
+      background: rgba(9, 13, 22, 0.8);
+      border-bottom: 1px solid var(--card-border);
+      z-index: 50;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #fff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand span {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      background: rgba(6, 182, 212, 0.1);
+      padding: 2px 8px;
+      border-radius: 20px;
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .header-links {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.03);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-link:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .hero-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.7) 100%);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: var(--radius-lg);
+      padding: 36px 40px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-title {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-bottom: 24px;
+      max-width: 650px;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 12px;
+      max-width: 750px;
+      flex-wrap: wrap;
+    }
+
+    .input-group {
+      flex: 1;
+      min-width: 280px;
+      position: relative;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      color: #fff;
+      font-size: 15px;
+      font-family: 'JetBrains Mono', monospace;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .input-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn {
+      padding: 14px 24px;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: var(--radius-md);
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #4338ca);
+      color: white;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4f46e5, #3730a3);
+      transform: translateY(-1px);
+    }
+
+    .btn-demo {
+      background: linear-gradient(135deg, #059669, #047857);
+      color: white;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-demo:hover {
+      background: linear-gradient(135deg, #10b981, #059669);
+      transform: translateY(-1px);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.95fr;
+      gap: 28px;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-created { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .badge-collected { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .badge-hub { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-transit { background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
+    .badge-delivery { background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3); }
+    .badge-delivered { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+    .stepper {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin: 28px 0 36px 0;
+    }
+
+    .stepper::before {
+      content: "";
+      position: absolute;
+      top: 18px;
+      left: 30px;
+      right: 30px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 0;
+    }
+
+    .stepper-progress {
+      position: absolute;
+      top: 18px;
+      left: 30px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+      z-index: 1;
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    .step-node {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 70px;
+      text-align: center;
+    }
+
+    .step-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #0f172a;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .step-node.active .step-circle {
+      border-color: var(--primary);
+      background: var(--primary);
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+      color: white;
+    }
+
+    .step-node.completed .step-circle {
+      border-color: var(--success);
+      background: var(--success);
+      color: white;
+    }
+
+    .step-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: color 0.3s ease;
+    }
+
+    .step-node.active .step-label,
+    .step-node.completed .step-label {
+      color: #fff;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      margin-top: 20px;
+      max-height: 420px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+
+    .timeline::-webkit-scrollbar {
+      width: 6px;
+    }
+    .timeline::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 16px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      transition: all 0.2s ease;
+    }
+
+    .timeline-item:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      background: rgba(20, 30, 52, 0.8);
+    }
+
+    .timeline-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .timeline-content {
+      flex: 1;
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .timeline-event-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .timeline-time {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .timeline-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .timeline-meta {
+      font-size: 11px;
+      color: var(--accent);
+      display: flex;
+      gap: 12px;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 6px;
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .tab-pane {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .tab-pane.active {
+      display: flex;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-control {
+      padding: 10px 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .log-box {
+      background: #060910;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      max-height: 220px;
+      overflow-y: auto;
+      color: #94a3b8;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .log-entry {
+      line-height: 1.4;
+      word-break: break-all;
+    }
+
+    .log-success { color: #34d399; }
+    .log-info { color: #38bdf8; }
+    .log-warn { color: #facc15; }
+    .log-err { color: #f87171; }
+
+    .status-bar {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 12px 20px;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    footer {
+      margin-top: auto;
+      border-top: 1px solid var(--card-border);
+      padding: 20px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      background: rgba(9, 13, 22, 0.95);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="logo-badge">📦</div>
+      <div>
+        <h1>SwiftTrack</h1>
+      </div>
+      <span>Event Sourcing Engine</span>
+    </div>
+    <div class="header-links">
+      <a href="http://localhost:15672" target="_blank" class="btn-link">🐇 RabbitMQ</a>
+      <a href="http://localhost:8084/h2-console" target="_blank" class="btn-link">🗄️ Event Store DB</a>
+      <a href="http://localhost:8082/h2-console" target="_blank" class="btn-link">📦 Shipment DB</a>
+      <a href="http://localhost:8081/h2-console" target="_blank" class="btn-link">👤 Customer DB</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-card">
+      <h2 class="hero-title">Live Parcel Tracking & Event Reconstruction</h2>
+      <p class="hero-desc">
+        Watch Event Sourcing in action. Enter a tracking ID below to reconstruct full parcel movement history dynamically from the append-only event log.
+      </p>
+      <div class="search-box">
+        <div class="input-group">
+          <input type="text" id="trackingInput" placeholder="Enter Tracking ID (e.g., TRK-12345678)" value="TRK-DEMO">
+        </div>
+        <button class="btn btn-primary" onclick="trackParcel()">🔍 Track Status</button>
+        <button class="btn btn-demo" onclick="runAutomatedDemo()">⚡ Auto-Run Full Journey Demo</button>
+      </div>
+    </section>
+
+    <div class="dashboard-grid">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>📍 Live Status</span>
+            <span id="statusBadge" class="badge badge-created">Ready to Track</span>
+          </div>
+          <span id="lastUpdated" style="font-size: 12px; color: var(--text-muted); font-family: monospace;"></span>
+        </div>
+
+        <div class="stepper">
+          <div class="stepper-progress" id="stepperProgress"></div>
+          <div class="step-node" id="step-created">
+            <div class="step-circle">1</div>
+            <div class="step-label">Created</div>
+          </div>
+          <div class="step-node" id="step-collected">
+            <div class="step-circle">2</div>
+            <div class="step-label">Collected</div>
+          </div>
+          <div class="step-node" id="step-hub">
+            <div class="step-circle">3</div>
+            <div class="step-label">Hub Transit</div>
+          </div>
+          <div class="step-node" id="step-delivery">
+            <div class="step-circle">4</div>
+            <div class="step-label">Out for Delivery</div>
+          </div>
+          <div class="step-node" id="step-delivered">
+            <div class="step-circle">5</div>
+            <div class="step-label">Delivered</div>
+          </div>
+        </div>
+
+        <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          <span>📜 Reconstructed Event Sourcing Timeline</span>
+          <span style="font-size: 11px; background: rgba(99,102,241,0.2); color: #818cf8; padding: 2px 8px; border-radius: 12px;" id="eventCountBadge">0 Events</span>
+        </h3>
+
+        <div class="timeline" id="timelineList">
+          <div style="text-align: center; color: var(--text-muted); padding: 40px 0; font-size: 14px;">
+            No tracking data loaded yet. Enter a Tracking ID or click <strong>Auto-Run Full Journey Demo</strong> above!
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🎮 Operations Simulator</div>
+          <span style="font-size: 11px; color: var(--accent);">Direct Gateway Dispatch</span>
+        </div>
+
+        <div class="tabs-nav">
+          <button class="tab-btn active" onclick="switchTab('tab-shipment')">1. Create Shipment</button>
+          <button class="tab-btn" onclick="switchTab('tab-collect')">2. Collect</button>
+          <button class="tab-btn" onclick="switchTab('tab-hub')">3. Hub Scan</button>
+          <button class="tab-btn" onclick="switchTab('tab-delivery')">4. Deliver</button>
+          <button class="tab-btn" onclick="switchTab('tab-customer')">Customer</button>
+        </div>
+
+        <div class="tab-pane active" id="tab-shipment">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Customer ID</label>
+              <input type="number" id="shipmentCustomerId" class="form-control" value="1">
+            </div>
+            <div class="form-group">
+              <label>Weight (kg)</label>
+              <input type="number" step="0.1" id="shipmentWeight" class="form-control" value="3.5">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Origin Hub / City</label>
+            <input type="text" id="shipmentOrigin" class="form-control" value="New York Distribution Hub">
+          </div>
+          <div class="form-group">
+            <label>Destination Address</label>
+            <input type="text" id="shipmentDestination" class="form-control" value="742 Evergreen Terrace, Springfield">
+          </div>
+          <button class="btn btn-primary" onclick="submitCreateShipment()">📦 Create Shipment (Emits ShipmentCreated)</button>
+        </div>
+
+        <div class="tab-pane" id="tab-collect">
+          <div class="form-group">
+            <label>Tracking ID</label>
+            <input type="text" id="collectTrackingId" class="form-control" placeholder="TRK-...">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Courier Agent Name</label>
+              <input type="text" id="collectAgentName" class="form-control" value="Courier Bob">
+            </div>
+            <div class="form-group">
+              <label>Pickup Location</label>
+              <input type="text" id="collectPickupLocation" class="form-control" value="Distribution Center NYC">
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="submitCollect()">🚚 Collect Parcel (Emits ParcelCollected)</button>
+        </div>
+
+        <div class="tab-pane" id="tab-hub">
+          <div class="form-group">
+            <label>Tracking ID</label>
+            <input type="text" id="hubTrackingId" class="form-control" placeholder="TRK-...">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Hub Code</label>
+              <input type="text" id="hubId" class="form-control" value="HUB-NORTH-01">
+            </div>
+            <div class="form-group">
+              <label>Hub Location</label>
+              <input type="text" id="hubLocation" class="form-control" value="Chicago Logistics Terminal">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Scan Notes</label>
+            <input type="text" id="hubNotes" class="form-control" value="Automated optical sorting complete">
+          </div>
+          <div class="form-row">
+            <button class="btn btn-primary" onclick="submitHubScan('scan-in')">📥 Scan-In Hub (ReachedHub)</button>
+            <button class="btn btn-primary" style="background: linear-gradient(135deg, #0284c7, #0369a1);" onclick="submitHubScan('scan-out')">📤 Scan-Out Hub (LeftHub)</button>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="tab-delivery">
+          <div class="form-group">
+            <label>Tracking ID</label>
+            <input type="text" id="deliveryTrackingId" class="form-control" placeholder="TRK-...">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Delivery Agent</label>
+              <input type="text" id="deliveryAgentName" class="form-control" value="Dave Courier">
+            </div>
+            <div class="form-group">
+              <label>Current Area</label>
+              <input type="text" id="deliveryArea" class="form-control" value="Springfield Sector 5">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Recipient Signature / Received By</label>
+            <input type="text" id="deliverySignature" class="form-control" value="Homer Simpson (Signed)">
+          </div>
+          <div class="form-row">
+            <button class="btn btn-primary" style="background: linear-gradient(135deg, #d97706, #b45309);" onclick="submitOutForDelivery()">🛵 Out For Delivery</button>
+            <button class="btn btn-demo" onclick="submitCompleteDelivery()">✅ Mark Delivered</button>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="tab-customer">
+          <div class="form-group">
+            <label>Customer Full Name</label>
+            <input type="text" id="custName" class="form-control" value="Alice Johnson">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="custEmail" class="form-control" value="alice@example.com">
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="text" id="custPhone" class="form-control" value="+1-555-0199">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Shipping Address</label>
+            <input type="text" id="custAddress" class="form-control" value="100 Innovation Blvd, Tech City">
+          </div>
+          <button class="btn btn-primary" onclick="submitRegisterCustomer()">👤 Register Customer (POST /customers)</button>
+        </div>
+
+        <h4 style="font-size: 13px; font-weight: 700; margin: 20px 0 10px 0; color: var(--text-muted);">
+          📡 Gateway Traffic & RabbitMQ Event Stream
+        </h4>
+        <div class="log-box" id="activityLogs">
+          <div class="log-entry log-info">[SYSTEM] SwiftTrack Frontend Initialized. Gateway target: http://localhost:8080</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-pill"><span class="dot"></span> API Gateway (:8080)</div>
+      <div class="status-pill"><span class="dot"></span> Customer Svc (:8081)</div>
+      <div class="status-pill"><span class="dot"></span> Shipment Svc (:8082)</div>
+      <div class="status-pill"><span class="dot"></span> Hub/Delivery Svc (:8083)</div>
+      <div class="status-pill"><span class="dot"></span> Tracking Event Sourcing (:8084)</div>
+      <div class="status-pill"><span class="dot"></span> Notification Svc (:8085)</div>
+      <div class="status-pill"><span class="dot"></span> RabbitMQ (:5672)</div>
+    </div>
+  </main>
+
+  <footer>
+    Distributed & Scalable Systems — Courier & Parcel Tracking System with Event Sourcing & Spring Boot
+  </footer>
+
+  <script>
+    const GATEWAY = "http://localhost:8080";
+
+    function log(msg, type = "info") {
+      const box = document.getElementById("activityLogs");
+      const time = new Date().toLocaleTimeString();
+      const div = document.createElement("div");
+      div.className = `log-entry log-${type}`;
+      div.textContent = `[${time}] ${msg}`;
+      box.prepend(div);
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.getElementById(tabId).classList.add("active");
+      event.target.classList.add("active");
+    }
+
+    function syncTrackingId(id) {
+      document.getElementById("trackingInput").value = id;
+      document.getElementById("collectTrackingId").value = id;
+      document.getElementById("hubTrackingId").value = id;
+      document.getElementById("deliveryTrackingId").value = id;
+    }
+
+    async function submitRegisterCustomer() {
+      const payload = {
+        name: document.getElementById("custName").value,
+        email: document.getElementById("custEmail").value,
+        phone: document.getElementById("custPhone").value,
+        address: document.getElementById("custAddress").value
+      };
+      try {
+        log(`POST /api/v1/customers -> Registering customer...`, "info");
+        const res = await fetch(`${GATEWAY}/api/v1/customers`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          log(`Customer created with ID: ${data.id} (${data.name})`, "success");
+          alert(`Customer Registered! ID: ${data.id}`);
+          document.getElementById("shipmentCustomerId").value = data.id;
+        } else {
+          log(`Error: ${data.error || JSON.stringify(data)}`, "err");
+        }
+      } catch (e) {
+        log(`Network Error: ${e.message}`, "err");
+      }
+    }
+
+    async function submitCreateShipment() {
+      const payload = {
+        customerId: parseInt(document.getElementById("shipmentCustomerId").value),
+        origin: document.getElementById("shipmentOrigin").value,
+        destination: document.getElementById("shipmentDestination").value,
+        weight: parseFloat(document.getElementById("shipmentWeight").value)
+      };
+      try {
+        log(`POST /api/v1/shipments -> Creating shipment...`, "info");
+        const res = await fetch(`${GATEWAY}/api/v1/shipments`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          log(`Shipment Created! Tracking ID: ${data.trackingId} (Emitted ShipmentCreated event)`, "success");
+          syncTrackingId(data.trackingId);
+          setTimeout(() => trackParcel(), 300);
+        } else {
+          log(`Shipment error: ${data.error || JSON.stringify(data)}`, "err");
+        }
+      } catch (e) {
+        log(`Network Error: ${e.message}`, "err");
+      }
+    }
+
+    async function submitCollect() {
+      const trk = document.getElementById("collectTrackingId").value.trim();
+      if (!trk) return alert("Enter Tracking ID");
+      const payload = {
+        trackingId: trk,
+        agentName: document.getElementById("collectAgentName").value,
+        pickupLocation: document.getElementById("collectPickupLocation").value
+      };
+      try {
+        log(`POST /api/v1/deliveries/collect for ${trk}...`, "info");
+        const res = await fetch(`${GATEWAY}/api/v1/deliveries/collect`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          log(`ParcelCollected event emitted for ${trk}`, "success");
+          setTimeout(() => trackParcel(), 400);
+        } else {
+          log(`Collect error: ${data.error || JSON.stringify(data)}`, "err");
+        }
+      } catch (e) {
+        log(`Network error: ${e.message}`, "err");
+      }
+    }
+
+    async function submitHubScan(type) {
+      const trk = document.getElementById("hubTrackingId").value.trim();
+      if (!trk) return alert("Enter Tracking ID");
+      const payload = {
+        trackingId: trk,
+        hubId: document.getElementById("hubId").value,
+        hubLocation: document.getElementById("hubLocation").value,
+        notes: document.getElementById("hubNotes").value
+      };
+      const endpoint = type === 'scan-in' ? 'hubs/scan-in' : 'hubs/scan-out';
+      try {
+        log(`POST /api/v1/${endpoint} for ${trk}...`, "info");
+        const res = await fetch(`${GATEWAY}/api/v1/${endpoint}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          log(`${type === 'scan-in' ? 'ReachedHub' : 'LeftHub'} event emitted for ${trk}`, "success");
+          setTimeout(() => trackParcel(), 400);
+        } else {
+          log(`Hub error: ${data.error || JSON.stringify(data)}`, "err");
+        }
+      } catch (e) {
+        log(`Network error: ${e.message}`, "err");
+      }
+    }
+
+    async function submitOutForDelivery() {
+      const trk = document.getElementById("deliveryTrackingId").value.trim();
+      if (!trk) return alert("Enter Tracking ID");
+      const payload = {
+        trackingId: trk,
+        agentName: document.getElementById("deliveryAgentName").value,
+        currentArea: document.getElementById("deliveryArea").value
+      };
+      try {
+        log(`POST /api/v1/deliveries/out-for-delivery for ${trk}...`, "info");
+        const res = await fetch(`${GATEWAY}/api/v1/deliveries/out-for-delivery`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          log(`OutForDelivery event emitted for ${trk}`, "success");
+          setTimeout(() => trackParcel(), 400);
+        } else {
+          log(`Error: ${data.error || JSON.stringify(data)}`, "err");
+        }
+      } catch (e) {
+        log(`Network error: ${e.message}`, "err");
+      }
+    }
+
+    async function submitCompleteDelivery() {
+      const trk = document.getElementById("deliveryTrackingId").value.trim();
+      if (!trk) return alert("Enter Tracking ID");
+      const payload = {
+        trackingId: trk,
+        agentName: document.getElementById("deliveryAgentName").value,
+        currentArea: "Customer Doorstep",
+        recipientSignature: document.getElementById("deliverySignature").value
+      };
+      try {
+        log(`POST /api/v1/deliveries/complete for ${trk}...`, "info");
+        const res = await fetch(`${GATEWAY}/api/v1/deliveries/complete`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          log(`Delivered event emitted for ${trk}! Final milestone achieved.`, "success");
+          setTimeout(() => trackParcel(), 400);
+        } else {
+          log(`Error: ${data.error || JSON.stringify(data)}`, "err");
+        }
+      } catch (e) {
+        log(`Network error: ${e.message}`, "err");
+      }
+    }
+
+    async function trackParcel() {
+      const trk = document.getElementById("trackingInput").value.trim();
+      if (!trk) return alert("Please enter a Tracking ID");
+
+      try {
+        log(`GET /api/v1/tracking/${trk} -> Replaying event stream...`, "info");
+        const res = await fetch(`${GATEWAY}/api/v1/tracking/${trk}`);
+        if (!res.ok) {
+          throw new Error(`Tracking ID not found or no events recorded yet (HTTP ${res.status})`);
+        }
+        const data = await res.json();
+        renderTracking(data);
+        log(`Successfully reconstructed state for ${trk}: Status=${data.currentStatus}`, "success");
+      } catch (e) {
+        log(`Tracking error: ${e.message}`, "err");
+        document.getElementById("statusBadge").className = "badge badge-created";
+        document.getElementById("statusBadge").textContent = "Not Found / In Transit";
+        document.getElementById("timelineList").innerHTML = `
+          <div style="text-align: center; color: #f87171; padding: 30px;">
+            ⚠️ ${e.message}
+          </div>
+        `;
+      }
+    }
+
+    function renderTracking(data) {
+      const badge = document.getElementById("statusBadge");
+      const status = data.currentStatus || "UNKNOWN";
+      badge.textContent = status;
+
+      badge.className = "badge";
+      if (status.includes("Created")) badge.classList.add("badge-created");
+      else if (status.includes("Collected")) badge.classList.add("badge-collected");
+      else if (status.includes("Hub")) badge.classList.add("badge-hub");
+      else if (status.includes("OutForDelivery")) badge.classList.add("badge-delivery");
+      else if (status.includes("Delivered")) badge.classList.add("badge-delivered");
+      else badge.classList.add("badge-transit");
+
+      document.getElementById("lastUpdated").textContent = `Last update: ${new Date(data.lastUpdated).toLocaleTimeString()}`;
+
+      const steps = [
+        { id: "step-created", key: "ShipmentCreated" },
+        { id: "step-collected", key: "ParcelCollected" },
+        { id: "step-hub", key: "ReachedHub" },
+        { id: "step-delivery", key: "OutForDelivery" },
+        { id: "step-delivered", key: "Delivered" }
+      ];
+
+      const eventTypes = data.auditHistory.map(e => e.eventType);
+
+      let highestStep = -1;
+      steps.forEach((s, idx) => {
+        const el = document.getElementById(s.id);
+        el.className = "step-node";
+        if (eventTypes.includes(s.key)) {
+          el.classList.add("completed");
+          highestStep = idx;
+        }
+      });
+
+      if (highestStep >= 0 && highestStep < steps.length - 1) {
+        document.getElementById(steps[highestStep].id).classList.add("active");
+      }
+      if (eventTypes.includes("Delivered")) {
+        document.getElementById("step-delivered").classList.add("completed");
+      }
+
+      const progressPercent = Math.min(100, (highestStep / (steps.length - 1)) * 100);
+      document.getElementById("stepperProgress").style.width = `${progressPercent}%`;
+
+      document.getElementById("eventCountBadge").textContent = `${data.auditHistory.length} Events Replayed`;
+      const timeline = document.getElementById("timelineList");
+      timeline.innerHTML = "";
+
+      const getIcon = (type) => {
+        switch (type) {
+          case 'ShipmentCreated': return '📦';
+          case 'ParcelCollected': return '🚚';
+          case 'ReachedHub': return '📥';
+          case 'LeftHub': return '📤';
+          case 'OutForDelivery': return '🛵';
+          case 'Delivered': return '✅';
+          default: return '📍';
+        }
+      };
+
+      data.auditHistory.forEach((evt, idx) => {
+        const item = document.createElement("div");
+        item.className = "timeline-item";
+        item.innerHTML = `
+          <div class="timeline-icon">${getIcon(evt.eventType)}</div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="timeline-event-name">${evt.eventType}</span>
+              <span class="timeline-time">${new Date(evt.timestamp).toLocaleString()}</span>
+            </div>
+            <div class="timeline-desc">${evt.statusDetails || 'Status updated'}</div>
+            <div class="timeline-meta">
+              <span>📍 Location: <strong>${evt.location || 'In Transit'}</strong></span>
+              <span>👤 Performed By: <strong>${evt.performedBy || 'System'}</strong></span>
+              <span>🆔 Event ID: <code>${evt.eventId ? evt.eventId.substring(0, 8) : 'evt-' + idx}</code></span>
+            </div>
+          </div>
+        `;
+        timeline.appendChild(item);
+      });
+    }
+
+    async function runAutomatedDemo() {
+      log("🚀 Starting Automated End-to-End User Journey Demo...", "warn");
+
+      log("[1/5] Creating new shipment order...", "info");
+      const shipRes = await fetch(`${GATEWAY}/api/v1/shipments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customerId: 1,
+          origin: "Distribution Center NYC",
+          destination: "742 Evergreen Terrace, Springfield",
+          weight: 2.8
+        })
+      });
+      const shipment = await shipRes.json();
+      const trk = shipment.trackingId;
+      syncTrackingId(trk);
+      log(`Created Shipment ${trk}`, "success");
+      await trackParcel();
+
+      await new Promise(r => setTimeout(r, 1200));
+
+      log("[2/5] Courier collecting parcel...", "info");
+      await fetch(`${GATEWAY}/api/v1/deliveries/collect`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          trackingId: trk,
+          agentName: "Agent Bob",
+          pickupLocation: "Distribution Center NYC"
+        })
+      });
+      await trackParcel();
+
+      await new Promise(r => setTimeout(r, 1200));
+
+      log("[3/5] Arrived at Chicago Sorting Hub...", "info");
+      await fetch(`${GATEWAY}/api/v1/hubs/scan-in`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          trackingId: trk,
+          hubId: "HUB-NORTH-01",
+          hubLocation: "Chicago Central Hub",
+          notes: "Optical scan passed"
+        })
+      });
+      await trackParcel();
+
+      await new Promise(r => setTimeout(r, 1200));
+
+      log("[4/5] Loaded onto local delivery van...", "info");
+      await fetch(`${GATEWAY}/api/v1/deliveries/out-for-delivery`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          trackingId: trk,
+          agentName: "Dave Courier",
+          currentArea: "Springfield Sector 5"
+        })
+      });
+      await trackParcel();
+
+      await new Promise(r => setTimeout(r, 1200));
+
+      log("[5/5] Delivered to recipient doorstep!", "warn");
+      await fetch(`${GATEWAY}/api/v1/deliveries/complete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          trackingId: trk,
+          agentName: "Dave Courier",
+          currentArea: "Front Porch",
+          recipientSignature: "Homer Simpson"
+        })
+      });
+      await trackParcel();
+
+      log("🎉 Full Automated Demo completed! All 5 events captured in Event Store.", "success");
+    }
+  </script>
+</body>
+</html>
